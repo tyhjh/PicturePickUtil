@@ -111,20 +111,8 @@ public class PickPhoto {
                 getDate();
                 dialog.setOnDismissListener(null);
                 dialog.dismiss();
-                Intent intent = new Intent(ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
-                intent.putExtra("crop", true);
-                intent.putExtra("scale", true);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//如果大于等于7.0使用FileProvider
-                    Uri uriForFile = FileProvider.getUriForFile(context, AUTHORITY, new File(path, date));
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, uriForFile);
-                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                } else {
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(path, date)));
-                }
                 ((Activity) context).startActivityForResult(intent, PICK_PHOTO);
             }
         });
@@ -153,8 +141,8 @@ public class PickPhoto {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         }
         // aspectX aspectY 是宽高的比例
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
+        /*intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);*/
         ((Activity) context).startActivityForResult(intent, CROP_PHOTO);
     }
 
