@@ -29,8 +29,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //初始化authority
         PicturePickUtil.init("com.yorhp.picturepick.fileProvider");
+        PicturePickUtil.setPictureSize(500, 500, 500);
+        PicturePickUtil.setPictureScale(1, 1);
         tv_hello = findViewById(R.id.tv_hello);
-        iv_picture=findViewById(R.id.iv_picture);
+        iv_picture = findViewById(R.id.iv_picture);
         PermissonUtil.checkPermission(MainActivity.this, null, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         tv_hello.setOnClickListener(new View.OnClickListener() {
             @Override
