@@ -6,9 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.io.File;
 
-import static com.yorhp.picturepick.PickPhoto.CROP_PHOTO;
-import static com.yorhp.picturepick.PickPhoto.PICK_PHOTO;
-import static com.yorhp.picturepick.PickPhoto.TAKE_PHOTO;
+import static com.yorhp.picturepick.PicturePickUtil.CROP_PHOTO;
+import static com.yorhp.picturepick.PicturePickUtil.PICK_PHOTO;
+import static com.yorhp.picturepick.PicturePickUtil.TAKE_PHOTO;
 
 
 public class PickActivity extends AppCompatActivity {

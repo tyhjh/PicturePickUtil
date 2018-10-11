@@ -30,6 +30,14 @@ import java.nio.channels.FileChannel;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Intent.ACTION_GET_CONTENT;
+import static com.yorhp.picturepick.PicturePickUtil.CROP_PHOTO;
+import static com.yorhp.picturepick.PicturePickUtil.PICK_PHOTO;
+import static com.yorhp.picturepick.PicturePickUtil.TAKE_PHOTO;
+import static com.yorhp.picturepick.PicturePickUtil.aspectX;
+import static com.yorhp.picturepick.PicturePickUtil.aspectY;
+import static com.yorhp.picturepick.PicturePickUtil.fileSize;
+import static com.yorhp.picturepick.PicturePickUtil.imgHeight;
+import static com.yorhp.picturepick.PicturePickUtil.imgWidth;
 
 /**
  * Created by Tyhj on 2017/8/29.
@@ -41,17 +49,8 @@ public class PickPhoto {
     public static String date;
     public static String path;
 
-    public static final int TAKE_PHOTO = 1;
-    public static final int CROP_PHOTO = 2;
-    public static final int PICK_PHOTO = 3;
 
-    private static int imgWidth = 500, imgHeight = 500, fileSize = 500;
 
-    public static void setPictureSize(int width, int height, int size) {
-        imgWidth = width;
-        imgHeight = height;
-        fileSize = size;
-    }
 
     public static void init(String authority) {
         AUTHORITY = authority;
@@ -111,20 +110,8 @@ public class PickPhoto {
                 getDate();
                 dialog.setOnDismissListener(null);
                 dialog.dismiss();
-                Intent intent = new Intent(ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
-                intent.putExtra("crop", true);
-                intent.putExtra("scale", true);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//如果大于等于7.0使用FileProvider
-                    Uri uriForFile = FileProvider.getUriForFile(context, AUTHORITY, new File(path, date));
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, uriForFile);
-                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                } else {
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(path, date)));
-                }
                 ((Activity) context).startActivityForResult(intent, PICK_PHOTO);
             }
         });
@@ -153,8 +140,10 @@ public class PickPhoto {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         }
         // aspectX aspectY 是宽高的比例
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
+        if (aspectX != null && aspectY != null) {
+            intent.putExtra("aspectX", aspectX);
+            intent.putExtra("aspectY", aspectY);
+        }
         ((Activity) context).startActivityForResult(intent, CROP_PHOTO);
     }
 
