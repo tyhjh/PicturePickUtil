@@ -50,8 +50,6 @@ public class PickPhoto {
     public static String path;
 
 
-
-
     public static void init(String authority) {
         AUTHORITY = authority;
     }
