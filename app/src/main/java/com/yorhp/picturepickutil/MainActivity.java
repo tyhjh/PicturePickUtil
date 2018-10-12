@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         tv_hello.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 PicturePickUtil.pick(MainActivity.this, new OnPickListener() {
                     @Override
                     public void pickPicture(File file) {
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                         iv_picture.setImageBitmap(BitmapFactory.decodeFile(file.getPath()));
                     }
                 });
+
             }
         });
     }
