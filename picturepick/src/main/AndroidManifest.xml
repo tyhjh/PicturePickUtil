@@ -5,7 +5,7 @@
     <application>
         <activity
             android:name=".PickActivity"
-            android:theme="@style/translucentTheme"></activity>
+            android:theme="@style/tyhjtranslucentTheme"></activity>
     </application>
 
 </manifest>
