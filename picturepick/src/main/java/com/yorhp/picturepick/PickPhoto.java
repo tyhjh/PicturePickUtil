@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.Intent.ACTION_GET_CONTENT;
 import static com.yorhp.picturepick.PicturePickUtil.CROP_PHOTO;
 import static com.yorhp.picturepick.PicturePickUtil.PICK_PHOTO;
 import static com.yorhp.picturepick.PicturePickUtil.TAKE_PHOTO;
@@ -50,13 +49,13 @@ public class PickPhoto {
     public static String path;
 
 
-    public static void init(String authority) {
+    static void init(String authority) {
         AUTHORITY = authority;
     }
 
 
     //选择图片
-    public static void choosePicture(final Activity context) {
+    static void choosePicture(final Activity context) {
         path = context.getExternalCacheDir().getPath();
         Button camoral, images;
         final AlertDialog.Builder di;
@@ -121,12 +120,12 @@ public class PickPhoto {
 
 
     //随机获取文件名字
-    public static void getDate() {
+    static void getDate() {
         date = System.currentTimeMillis() + ".JPEG";
     }
 
     //剪裁图片
-    public static void cropPhoto(Uri imageUri, Context context) {
+    static void cropPhoto(Uri imageUri, Context context) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             File file = new File(PickPhoto.path, PickPhoto.date);
@@ -150,7 +149,7 @@ public class PickPhoto {
     }
 
     //获取返回值
-    public static void getPhoto(int requestCode, int resultCode, Context context, Intent data, CamerabakListener getFile) {
+    static void getPhoto(int requestCode, int resultCode, Context context, Intent data, CamerabakListener getFile) {
         switch (requestCode) {
             //这是从相机返回的数据
             case TAKE_PHOTO:
@@ -209,7 +208,7 @@ public class PickPhoto {
         }
     }
 
-    public interface CamerabakListener {
+    interface CamerabakListener {
         void getFile(File file);
     }
 

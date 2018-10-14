@@ -17,13 +17,13 @@ public class PicturePickUtil {
 
     private static OnPickListener listener;
 
-    public static final int TAKE_PHOTO = 1;
-    public static final int CROP_PHOTO = 2;
-    public static final int PICK_PHOTO = 3;
+    static final int TAKE_PHOTO = 1;
+    static final int CROP_PHOTO = 2;
+    static final int PICK_PHOTO = 3;
 
-    public static Integer aspectX, aspectY;
+    static Integer aspectX, aspectY;
 
-    public static int imgWidth = 500, imgHeight = 500, fileSize = 500;
+    static int imgWidth = 500, imgHeight = 500, fileSize = 500;
 
     public static void pick(Activity activity, OnPickListener listener) {
         PicturePickUtil.listener = listener;
@@ -33,6 +33,7 @@ public class PicturePickUtil {
 
     /**
      * 初始化 authority
+     *
      * @param authority
      */
     public static void init(String authority) {
@@ -41,6 +42,7 @@ public class PicturePickUtil {
 
     /**
      * 图片压缩的大小
+     *
      * @param width
      * @param height
      * @param size
@@ -64,7 +66,7 @@ public class PicturePickUtil {
     }
 
 
-    public static void pickResult(File file) {
+    static void pickResult(File file) {
         if (listener != null) {
             listener.pickPicture(file);
         }
