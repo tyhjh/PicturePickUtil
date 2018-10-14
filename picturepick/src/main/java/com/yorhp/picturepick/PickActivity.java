@@ -29,14 +29,12 @@ public class PickActivity extends AppCompatActivity {
             overridePendingTransition(0, 0);
         }
 
-
         if ((requestCode == PICK_PHOTO || requestCode == CROP_PHOTO || requestCode == TAKE_PHOTO)) {
             PickPhoto.getPhoto(requestCode, resultCode, this, data, new PickPhoto.CamerabakListener() {
                 @Override
                 public void getFile(File file) {
                     PicturePickUtil.pickResult(file);
                     finish();
-                    overridePendingTransition(0, 0);
                 }
             });
         }

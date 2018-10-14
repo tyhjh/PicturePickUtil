@@ -28,7 +28,6 @@ public class PicturePickUtil {
     public static void pick(Activity activity, OnPickListener listener) {
         PicturePickUtil.listener = listener;
         activity.startActivity(new Intent(activity, PickActivity.class));
-        activity.overridePendingTransition(0, 0);
     }
 
 
