@@ -50,8 +50,6 @@ public class PickPhoto {
     public static String path;
 
 
-
-
     public static void init(String authority) {
         AUTHORITY = authority;
     }
@@ -83,6 +81,10 @@ public class PickPhoto {
         camoral.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.CAMERA}, 1);
+                    return;
+                }
                 getDate();
                 dialog.setOnDismissListener(null);
                 dialog.dismiss();
