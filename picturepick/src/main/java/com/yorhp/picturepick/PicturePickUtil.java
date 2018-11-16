@@ -25,6 +25,8 @@ public class PicturePickUtil {
 
     static int imgWidth = 500, imgHeight = 500, fileSize = 500;
 
+    static boolean creatNewFile = true;
+
     public static void pick(Activity activity, OnPickListener listener) {
         PicturePickUtil.listener = listener;
         activity.startActivity(new Intent(activity, PickActivity.class));
@@ -70,5 +72,9 @@ public class PicturePickUtil {
         if (listener != null) {
             listener.pickPicture(file);
         }
+    }
+
+    public static void setCreatNewFile(boolean creatNewFile) {
+        PicturePickUtil.creatNewFile = creatNewFile;
     }
 }

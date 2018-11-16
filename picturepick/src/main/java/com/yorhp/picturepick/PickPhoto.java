@@ -155,6 +155,10 @@ public class PickPhoto {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     File file = new File(PickPhoto.path, PickPhoto.date);
+                    if (!PicturePickUtil.creatNewFile) {
+                        getFile.getFile(file);
+                        return;
+                    }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         Uri inputUri = FileProvider.getUriForFile(context, AUTHORITY, file);//通过FileProvider创建一个content类型的Uri
                         cropPhoto(inputUri, context);
@@ -166,8 +170,14 @@ public class PickPhoto {
             //这是从相册返回的数据
             case PICK_PHOTO:
                 if (resultCode == RESULT_OK) {
+
+                    String path_pre = GetImagePath.getPath(context, data.getData());
+                    if (!PicturePickUtil.creatNewFile) {
+                        getFile.getFile(new File(path_pre));
+                        return;
+                    }
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//如果大于等于7.0使用FileProvider
-                        String path_pre = GetImagePath.getPath(context, data.getData());
                         File newFile = new File(PickPhoto.path, PickPhoto.date);
                         Toast.makeText(context, "加载中", Toast.LENGTH_SHORT).show();
                         try {
@@ -178,7 +188,6 @@ public class PickPhoto {
                             e.printStackTrace();
                         }
                     } else {
-                        String path_pre = GetImagePath.getPath(context, data.getData());
                         File newFile = new File(PickPhoto.path, PickPhoto.date);
                         Toast.makeText(context, "加载中", Toast.LENGTH_SHORT).show();
                         try {
