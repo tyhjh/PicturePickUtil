@@ -47,6 +47,9 @@ public class PickPhoto {
     private static String AUTHORITY;
     public static String date;
     public static String path;
+    public final static int CHOOSE_BY_VIEW = 0;
+    public final static int CHOOSE_BY_CAMERA = 1;
+    public final static int CHOOSE_BY_ALBUM = 2;
 
 
     static void init(String authority) {
@@ -57,6 +60,28 @@ public class PickPhoto {
     //选择图片
     static void choosePicture(final Activity context) {
         path = context.getExternalCacheDir().getPath();
+        switch (PicturePickUtil.choosePicWay) {
+            case CHOOSE_BY_VIEW:
+                chooseByView(context);
+                break;
+            case CHOOSE_BY_CAMERA:
+                openCamera(context);
+                break;
+            case CHOOSE_BY_ALBUM:
+                openAlbum(context);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    /**
+     * 使用默认界面选择
+     *
+     * @param context
+     */
+    private static void chooseByView(final Activity context) {
         Button camoral, images;
         final AlertDialog.Builder di;
         di = new AlertDialog.Builder(context);
@@ -80,42 +105,61 @@ public class PickPhoto {
         camoral.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.CAMERA}, 1);
-                    return;
-                }
-                getDate();
                 dialog.setOnDismissListener(null);
                 dialog.dismiss();
-                File file = new File(path, date);
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//7.0及以上
-                    Uri uriForFile = FileProvider.getUriForFile(context, AUTHORITY, file);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, uriForFile);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                } else {
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-                }
-                ((Activity) context).startActivityForResult(intent, TAKE_PHOTO);
+                openCamera(context);
+
             }
         });
         // 相册
         images.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                    return;
-                }
-                getDate();
                 dialog.setOnDismissListener(null);
                 dialog.dismiss();
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                ((Activity) context).startActivityForResult(intent, PICK_PHOTO);
+                openAlbum(context);
             }
         });
+    }
+
+    /**
+     * 打开相册
+     *
+     * @param context
+     */
+    private static void openAlbum(Activity context) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            return;
+        }
+        getDate();
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        context.startActivityForResult(intent, PICK_PHOTO);
+    }
+
+    /**
+     * 打开相机
+     *
+     * @param context
+     */
+    private static void openCamera(Activity context) {
+        getDate();
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.CAMERA}, 1);
+            return;
+        }
+        File file = new File(path, date);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//7.0及以上
+            Uri uriForFile = FileProvider.getUriForFile(context, AUTHORITY, file);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriForFile);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        } else {
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+        }
+        context.startActivityForResult(intent, TAKE_PHOTO);
     }
 
 
@@ -170,7 +214,6 @@ public class PickPhoto {
             //这是从相册返回的数据
             case PICK_PHOTO:
                 if (resultCode == RESULT_OK) {
-
                     String path_pre = GetImagePath.getPath(context, data.getData());
                     if (!PicturePickUtil.creatNewFile) {
                         getFile.getFile(new File(path_pre));

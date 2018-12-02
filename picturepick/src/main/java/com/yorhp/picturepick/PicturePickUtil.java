@@ -27,11 +27,26 @@ public class PicturePickUtil {
 
     static boolean creatNewFile = true;
 
+    static int choosePicWay = 0;
+
     public static void pick(Activity activity, OnPickListener listener) {
         PicturePickUtil.listener = listener;
         activity.startActivity(new Intent(activity, PickActivity.class));
+        choosePicWay = 0;
     }
 
+
+    public static void pickByCamera(Activity activity, OnPickListener listener) {
+        PicturePickUtil.listener = listener;
+        activity.startActivity(new Intent(activity, PickActivity.class));
+        choosePicWay = 1;
+    }
+
+    public static void pickByAlbum(Activity activity, OnPickListener listener) {
+        PicturePickUtil.listener = listener;
+        activity.startActivity(new Intent(activity, PickActivity.class));
+        choosePicWay = 2;
+    }
 
     /**
      * 初始化 authority
@@ -77,4 +92,5 @@ public class PicturePickUtil {
     public static void setCreatNewFile(boolean creatNewFile) {
         PicturePickUtil.creatNewFile = creatNewFile;
     }
+
 }

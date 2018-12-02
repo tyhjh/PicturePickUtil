@@ -29,6 +29,13 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:layout_marginTop="20dp"
+            android:id="@+id/iv_album"
+            android:text="打开相册选择图片"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
 

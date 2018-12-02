@@ -16,7 +16,7 @@ import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tv_hello;
+    TextView tv_hello, iv_album;
     ImageView iv_picture;
 
     @Override
@@ -31,8 +31,12 @@ public class MainActivity extends AppCompatActivity {
         PicturePickUtil.setPictureScale(1, 1);
         //如果不需要裁剪，直接获取路径可以设置为false，
         PicturePickUtil.setCreatNewFile(false);
+
+
         tv_hello = (TextView) findViewById(R.id.tv_hello);
         iv_picture = (ImageView) findViewById(R.id.iv_picture);
+        iv_album = (TextView) findViewById(R.id.iv_album);
+
         tv_hello.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,8 +47,21 @@ public class MainActivity extends AppCompatActivity {
                         iv_picture.setImageBitmap(BitmapFactory.decodeFile(file.getPath()));
                     }
                 });
-
             }
         });
+        iv_album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PicturePickUtil.pickByAlbum(MainActivity.this, new OnPickListener() {
+                    @Override
+                    public void pickPicture(File file) {
+                        Log.e("哈哈哈哈：", file.getPath());
+                        iv_picture.setImageBitmap(BitmapFactory.decodeFile(file.getPath()));
+                    }
+                });
+            }
+        });
+
+
     }
 }
