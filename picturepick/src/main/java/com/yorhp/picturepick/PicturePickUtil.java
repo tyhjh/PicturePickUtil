@@ -83,10 +83,15 @@ public class PicturePickUtil {
     }
 
 
+    public static void reSetListener() {
+        PicturePickUtil.listener = null;
+    }
+
     static void pickResult(File file) {
         if (listener != null) {
             listener.pickPicture(file);
         }
+        listener = null;
     }
 
     public static void setCreatNewFile(boolean creatNewFile) {

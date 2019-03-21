@@ -130,6 +130,8 @@ public class PickPhoto {
     private static void openAlbum(Activity context) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            PicturePickUtil.reSetListener();
+            context.finish();
             return;
         }
         getDate();
@@ -147,6 +149,8 @@ public class PickPhoto {
         getDate();
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.CAMERA}, 1);
+            PicturePickUtil.reSetListener();
+            context.finish();
             return;
         }
         File file = new File(path, date);
