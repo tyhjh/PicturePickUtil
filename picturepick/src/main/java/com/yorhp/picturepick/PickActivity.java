@@ -23,8 +23,8 @@ public class PickActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode == 0) {
+            PicturePickUtil.reSetListener();
             finish();
             overridePendingTransition(0, 0);
         }
@@ -38,6 +38,11 @@ public class PickActivity extends AppCompatActivity {
                 }
             });
         }
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PicturePickUtil.reSetListener();
     }
 }
