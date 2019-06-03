@@ -25,7 +25,13 @@ public class PicturePickUtil {
 
     static int imgWidth = 500, imgHeight = 500, fileSize = 500;
 
-    static boolean creatNewFile = true;
+    static boolean cropPic = false;
+
+
+    /**
+     * 是否压缩文件
+     */
+    static boolean compressedFile = false;
 
     static int choosePicWay = 0;
 
@@ -94,8 +100,16 @@ public class PicturePickUtil {
         listener = null;
     }
 
-    public static void setCreatNewFile(boolean creatNewFile) {
-        PicturePickUtil.creatNewFile = creatNewFile;
+
+    /**
+     * 是否压缩文件
+     * @param compressedFile
+     */
+    public static void setCompressedFile(boolean compressedFile) {
+        PicturePickUtil.compressedFile = compressedFile;
     }
 
+    public static void setCropPic(boolean cropPic) {
+        PicturePickUtil.cropPic = cropPic;
+    }
 }

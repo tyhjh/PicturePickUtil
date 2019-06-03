@@ -34,6 +34,7 @@ import static com.yorhp.picturepick.PicturePickUtil.PICK_PHOTO;
 import static com.yorhp.picturepick.PicturePickUtil.TAKE_PHOTO;
 import static com.yorhp.picturepick.PicturePickUtil.aspectX;
 import static com.yorhp.picturepick.PicturePickUtil.aspectY;
+import static com.yorhp.picturepick.PicturePickUtil.cropPic;
 import static com.yorhp.picturepick.PicturePickUtil.fileSize;
 import static com.yorhp.picturepick.PicturePickUtil.imgHeight;
 import static com.yorhp.picturepick.PicturePickUtil.imgWidth;
@@ -203,15 +204,22 @@ public class PickPhoto {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     File file = new File(PickPhoto.path, PickPhoto.date);
-                    if (!PicturePickUtil.creatNewFile) {
+
+                    if (cropPic) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            //通过FileProvider创建一个content类型的Uri
+                            Uri inputUri = FileProvider.getUriForFile(context, AUTHORITY, file);
+                            cropPhoto(inputUri, context);
+                        } else {
+                            cropPhoto(Uri.fromFile(file), context);
+                        }
+                    } else {
+                        //压缩文件
+                        if (PicturePickUtil.compressedFile) {
+                            imgCompress(file.getPath(), file, imgWidth, imgHeight, fileSize);
+                        }
                         getFile.getFile(file);
                         return;
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        Uri inputUri = FileProvider.getUriForFile(context, AUTHORITY, file);//通过FileProvider创建一个content类型的Uri
-                        cropPhoto(inputUri, context);
-                    } else {
-                        cropPhoto(Uri.fromFile(file), context);
                     }
                 }
                 break;
@@ -219,41 +227,43 @@ public class PickPhoto {
             case PICK_PHOTO:
                 if (resultCode == RESULT_OK) {
                     String path_pre = GetImagePath.getPath(context, data.getData());
-                    if (!PicturePickUtil.creatNewFile) {
-                        getFile.getFile(new File(path_pre));
+
+                    File newFile = new File(PickPhoto.path, PickPhoto.date);
+                    Toast.makeText(context, "加载中", Toast.LENGTH_SHORT).show();
+                    try {
+                        copyFile(new File(path_pre), newFile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (cropPic) {
+                        //如果大于等于7.0使用FileProvider
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Uri dataUri = FileProvider.getUriForFile(context, AUTHORITY, newFile);
+                            cropPhoto(dataUri, context);
+                        } else {
+                            cropPhoto(Uri.fromFile(newFile), context);
+                        }
+                    } else {
+                        //压缩文件
+                        if (PicturePickUtil.compressedFile) {
+                            imgCompress(newFile.getPath(), newFile, imgWidth, imgHeight, fileSize);
+                        }
+                        getFile.getFile(newFile);
                         return;
                     }
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {//如果大于等于7.0使用FileProvider
-                        File newFile = new File(PickPhoto.path, PickPhoto.date);
-                        Toast.makeText(context, "加载中", Toast.LENGTH_SHORT).show();
-                        try {
-                            copyFile(new File(path_pre), newFile);
-                            Uri dataUri = FileProvider.getUriForFile(context, AUTHORITY, newFile);
-                            PickPhoto.cropPhoto(dataUri, context);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        File newFile = new File(PickPhoto.path, PickPhoto.date);
-                        Toast.makeText(context, "加载中", Toast.LENGTH_SHORT).show();
-                        try {
-                            copyFile(new File(path_pre), newFile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        cropPhoto(Uri.fromFile(newFile), context);
-                    }
 
                 }
-
                 break;
             //剪裁图片返回数据,就是原来的文件
             case CROP_PHOTO:
                 if (resultCode == RESULT_OK) {
                     String fileName = PickPhoto.path + "/" + PickPhoto.date;
                     File newFile = new File(PickPhoto.path, PickPhoto.date);
-                    imgCompress(fileName, newFile, imgWidth, imgHeight, fileSize);
+                    if (PicturePickUtil.compressedFile) {
+                        imgCompress(fileName, newFile, imgWidth, imgHeight, fileSize);
+                    }
                     //获取到的就是new File或fileName
                     getFile.getFile(newFile);
                 }

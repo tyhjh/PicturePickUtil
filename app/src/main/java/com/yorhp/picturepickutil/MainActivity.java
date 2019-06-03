@@ -29,11 +29,10 @@ public class MainActivity extends AppCompatActivity {
         //初始化authority
 
         PicturePickUtil.init("com.yorhp.picturepick.fileProvider");
-        PicturePickUtil.setPictureSize(500, 500, 500);
         //设置裁剪比例和图像大小，默认会复制一次，防止把原图片改变
-        PicturePickUtil.setPictureScale(1, 1);
         //如果不需要裁剪，直接获取路径可以设置为false，
-        PicturePickUtil.setCreatNewFile(false);
+        PicturePickUtil.setCropPic(true);
+        PicturePickUtil.setCompressedFile(false);
 
 
         tv_hello = (TextView) findViewById(R.id.tv_hello);
@@ -51,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
                     public void pickPicture(File file) {
                         Log.e("哈哈哈哈：", file.getPath());
                         iv_picture.setImageBitmap(BitmapFactory.decodeFile(file.getPath()));
+
                     }
                 });
             }
