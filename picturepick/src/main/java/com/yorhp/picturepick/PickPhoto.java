@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -29,6 +30,8 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 import static android.app.Activity.RESULT_OK;
+import static com.yorhp.picturepick.BitmapUtil.copyFile;
+import static com.yorhp.picturepick.BitmapUtil.imgCompress;
 import static com.yorhp.picturepick.PicturePickUtil.CROP_PHOTO;
 import static com.yorhp.picturepick.PicturePickUtil.PICK_PHOTO;
 import static com.yorhp.picturepick.PicturePickUtil.TAKE_PHOTO;
@@ -51,6 +54,8 @@ public class PickPhoto {
     public final static int CHOOSE_BY_VIEW = 0;
     public final static int CHOOSE_BY_CAMERA = 1;
     public final static int CHOOSE_BY_ALBUM = 2;
+
+    public static int rotateAngle = 0;
 
 
     static void init(String authority) {
@@ -197,6 +202,7 @@ public class PickPhoto {
         ((Activity) context).startActivityForResult(intent, CROP_PHOTO);
     }
 
+
     //获取返回值
     static void getPhoto(int requestCode, int resultCode, Context context, Intent data, CamerabakListener getFile) {
         switch (requestCode) {
@@ -204,7 +210,7 @@ public class PickPhoto {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     File file = new File(PickPhoto.path, PickPhoto.date);
-
+                    rotateAngle = BitmapUtil.getExifOrientation(PickPhoto.path);
                     if (cropPic) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             //通过FileProvider创建一个content类型的Uri
@@ -227,7 +233,7 @@ public class PickPhoto {
             case PICK_PHOTO:
                 if (resultCode == RESULT_OK) {
                     String path_pre = GetImagePath.getPath(context, data.getData());
-
+                    rotateAngle = BitmapUtil.getExifOrientation(path_pre);
                     File newFile = new File(PickPhoto.path, PickPhoto.date);
                     Toast.makeText(context, "加载中", Toast.LENGTH_SHORT).show();
                     try {
@@ -274,72 +280,9 @@ public class PickPhoto {
         }
     }
 
+
     interface CamerabakListener {
         void getFile(File file);
-    }
-
-
-    private static void copyFile(File source, File dest) throws IOException {
-        FileChannel inputChannel = null;
-        FileChannel outputChannel = null;
-        try {
-            inputChannel = new FileInputStream(source).getChannel();
-            outputChannel = new FileOutputStream(dest).getChannel();
-            outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (outputChannel != null)
-                outputChannel.close();
-            inputChannel.close();
-        }
-    }
-
-
-    //图片压缩
-    private static void imgCompress(String filePath, File newFile, int x, int y, int size) {
-        int imageMg = 100;
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, options);
-        //规定要压缩图片的分辨率
-        options.inSampleSize = calculateInSampleSize(options, x, y);
-        options.inJustDecodeBounds = false;
-        Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, imageMg, baos);
-        //如果文件大于100KB就进行质量压缩，每次压缩比例增加百分之五
-        while (baos.toByteArray().length / 1024 > size && imageMg > 50) {
-            baos.reset();
-            imageMg -= 5;
-            bitmap.compress(Bitmap.CompressFormat.JPEG, imageMg, baos);
-        }
-        //然后输出到指定的文件中
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(newFile);
-            fos.write(baos.toByteArray());
-            fos.flush();
-            fos.close();
-            baos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    //计算图片的缩放值
-    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            final int heightRatio = Math.round((float) height / (float) reqHeight);
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-        }
-        return inSampleSize;
     }
 
 

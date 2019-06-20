@@ -42,7 +42,7 @@ public class PickActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         PicturePickUtil.reSetListener();
+        super.onDestroy();
     }
 }
