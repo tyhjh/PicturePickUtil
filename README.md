@@ -3,9 +3,8 @@
 标签（空格分隔）： Android
 
 ---
-原文链接：https://www.zybuluo.com/Tyhj/note/1307477
-
-图片选择经常用到，系统自带的图片选择挺好的，写起来不难，但是比较麻烦，所以自己集成了一个库，方便使用
+> 原文：https://www.jianshu.com/p/401d6bb9f17d
+图片选择经常用到，系统自带的图片选择挺好的，写起来不难，但是比较麻烦，所以自己集成了一个库，方便使用;使用详情看demo，有些功能文档未说明
 
 ### 集成方法：
 Step 1. Add the JitPack repository to your build file
